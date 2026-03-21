@@ -3,6 +3,7 @@ defaults:
   - data: default
   - model: default
   - train: default
+  - sweep: none
 
 hydra:
   run:
