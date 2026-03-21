@@ -1,0 +1,5 @@
+hydra:
+  sweeper:
+    params:
+      train.beta: 1e-2, 5e-3, 1e-3
+      train.gamma: 0.5, 1.0, 2.0, 3.0

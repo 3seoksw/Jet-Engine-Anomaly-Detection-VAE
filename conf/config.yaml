@@ -1,0 +1,12 @@
+defaults:
+  - _self_
+  - data: default
+  - model: default
+  - train: default
+
+hydra:
+  run:
+    dir: outputs/${now:%Y%m%d_%H%M}
+  sweep:
+    dir: multirun/${now:%Y%m%d_%H%M}
+    subdir: beta=${train.beta}_gamma=${train.gamma}
