@@ -94,10 +94,6 @@ def main():
         dfs.append(df)
     test_df = pd.concat(dfs)
 
-    train_df["rul"] = train_df["rul"] / rul_max
-    val_df["rul"] = val_df["rul"] / rul_max
-    test_df["rul"] = test_df["rul"] / rul_max
-
     input_features = []
     input_features += [f"ops_setting_{i}" for i in range(1, 4)]
     input_features += [f"sensor_{i}" for i in range(1, 22)]
