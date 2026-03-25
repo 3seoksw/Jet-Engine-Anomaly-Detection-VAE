@@ -48,51 +48,18 @@ def assign_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def process_test(dset_dir: str, dset_name) -> pd.DataFrame:
-    data_file = f"{dset_dir}/test_{dset_name}.txt"
-    df = process_cmapss(data_file)
-
-    rul_file = f"{dset_dir}/RUL_{dset_name}.txt"
-    ruls = pd.read_csv(rul_file, header=None)
-    ruls.columns = ["final_rul"]
-    ruls["unit"] = range(1, len(ruls) + 1)
-
-    last_cycle_nums = df.groupby("unit")["cycle"].max().to_frame(name="last_cycle")
-    df = df.merge(last_cycle_nums, on="unit", how="left")
-    df = df.merge(ruls, on="unit", how="left")
-    df["rul"] = df["final_rul"] + df["last_cycle"] - df["cycle"]
-    df["health_idx"] = df["rul"] / (df["last_cycle"] + df["final_rul"])
-    df["health_level"] = df["rul"].apply(_assign_health_level)
-    df.drop(columns=["last_cycle", "final_rul"], inplace=True)
-
-    return df
-
-
 def main():
     dset_dir = "data/CMAPSSData"
-    dfs = []
-    for i in range(1, 5):
-        dset_name = f"FD00{i}"
-        filename = f"{dset_dir}/train_{dset_name}.txt"
-        df = process_cmapss(filename)
-        dfs.append(df)
-    train_df = pd.concat(dfs)
-    rul_max = train_df["rul"].max()
-    print(rul_max)
 
-    dfs = []
-    for i in range(1, 3):
-        dset_name = f"FD00{i}"
-        df = process_test(dset_dir, dset_name)
-        dfs.append(df)
-    val_df = pd.concat(dfs)
+    train_dfs = []
+    for fd in ["FD001", "FD002"]:
+        df = process_cmapss(f"{dset_dir}/train_{fd}.txt")
+        train_dfs.append(df)
+    train_df = pd.concat(train_dfs, ignore_index=True)
+    train_df = train_df[train_df["rul"] >= 30].reset_index(drop=True)
 
-    dfs = []
-    for i in range(3, 5):
-        dset_name = f"FD00{i}"
-        df = process_test(dset_dir, dset_name)
-        dfs.append(df)
-    test_df = pd.concat(dfs)
+    val_df = process_cmapss(f"{dset_dir}/train_FD003.txt")
+    test_df = process_cmapss(f"{dset_dir}/train_FD004.txt")
 
     input_features = []
     input_features += [f"ops_setting_{i}" for i in range(1, 4)]
@@ -112,6 +79,12 @@ def main():
     train_df.to_csv("data/cmapss_train.csv", index=False)
     val_df.to_csv("data/cmapss_val.csv", index=False)
     test_df.to_csv("data/cmapss_test.csv", index=False)
+
+    for name, df in [("train", train_df), ("val", val_df), ("test", test_df)]:
+        n_units = df.groupby(["engine", "unit"]).ngroups
+        print(
+            f"{name}: {len(df)} rows, {n_units} units, engines {sorted(df['engine'].unique())}"
+        )
 
 
 if __name__ == "__main__":
