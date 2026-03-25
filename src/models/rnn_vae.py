@@ -31,9 +31,6 @@ class RNN_VAE(VAE_Base):
         z = self.reparameterize(mu, logvar)
         z_dec = self.decode(z)  # [B, d_model]
 
-        # RUL
-        rul = self.rul(z)
-
         # Decoder hidden state
         h0 = z_dec.unsqueeze(0).repeat(self.n_layers, 1, 1)  # [n_layers, B, d_model]
 
@@ -42,11 +39,11 @@ class RNN_VAE(VAE_Base):
 
         out, _ = self.dec_rnn(dec_input, h0)
         out = self.dec_out(out)
-        return out, mu, logvar, rul.squeeze()
+        return out, mu, logvar
 
 
 if __name__ == "__main__":
     x = torch.randn((64, 5, 24), dtype=torch.float32)
-    model = RNN_VAE()
+    model = RNN_VAE(True)
     out, mu, logvar, rul = model(x)
     print(out.shape, rul.shape, mu.shape)

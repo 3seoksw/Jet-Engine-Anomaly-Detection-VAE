@@ -21,14 +21,6 @@ class VAE_Base(nn.Module):
             nn.ReLU(),
         )
 
-        # RUL Head
-        self.rul = nn.Sequential(
-            nn.Linear(latent_dim, latent_dim),
-            nn.ReLU(),
-            nn.Linear(latent_dim, 1),
-            nn.Softplus(),
-        )
-
     def encode(self, x: torch.Tensor):
         h = self.enc_linear(x)
         mu = self.enc_mu(h)
