@@ -5,6 +5,7 @@ from data_module.cmapss_dataset import CMAPSS_Dataset
 class FullDataLoader:
     def __init__(self, data_dir: str = "data", window: int = 5, batch_size: int = 64):
         train_dset = CMAPSS_Dataset(data_dir, "train", window)
+        self.input_dim = len(train_dset.input_features)
         self.train_loader = DataLoader(train_dset, batch_size=batch_size, shuffle=True)
 
         val_dset = CMAPSS_Dataset(data_dir, "val", window)
@@ -21,3 +22,6 @@ class FullDataLoader:
 
     def get_test_loader(self):
         return self.test_loader
+
+    def get_input_dim(self):
+        return self.input_dim
