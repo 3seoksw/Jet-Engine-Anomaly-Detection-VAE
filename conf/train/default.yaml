@@ -1,4 +1,4 @@
-epochs: 50
-lr: 3e-4
-beta: 1e-2
-gamma: 2.0
+epochs: 10
+lr: 1e-4
+beta: 10
+gamma: 1.0
