@@ -26,6 +26,10 @@ The encoder and decoder are trained jointly via the objective loss function, neg
 
 ## Performance Overview
 
+<img src="assets/latent_3d.png"/>
+VAE's latent mapping ($\beta=1$) by RUL labels.
+Each set shows the corresponding number of conditions (clusters), such that 7 clusters for training set, 1 cluster for validation set, and 6 clusters for test set.
+
 <img src="assets/degradation.png"/>
 KL score differences between healthy and anomaly samples within a full degradation trajectory.
 
